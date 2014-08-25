@@ -1,0 +1,11 @@
+#!/bin/bash
+set -v
+repo_owner=$(stat -c '%U' /var/repos)
+for i in "$REPOS" ; do
+  if [ "" != "$i" ] ; then
+      su ${repo_owner} -c "git init --bare /var/repos/$i.git"
+      su ${repo_owner} -c "ln -s /var/repos/post-receive /var/repos/$i.git/hooks/post-receive"
+  fi
+done
+sleep infinity
+
