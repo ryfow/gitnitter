@@ -1,6 +1,15 @@
 #!/bin/bash
 set -v
-repo_owner=$(stat -c '%U' /var/repos)
+uid=$(stat -c '%u' /var/repos)
+ent=$(getent passwd $uid)
+if [ "$?" != "0" ] ; then
+  USER_NAME="feh"
+  useradd --uid $uid feh
+else
+    USER_NAME=$(getent passwd $uid | awk -F: '{{print $1}}')
+fi
+
+repo_owner=$USER_NAME
 for i in "$REPOS" ; do
   if [ "" != "$i" ] ; then
       su ${repo_owner} -c "git init --bare /var/repos/$i.git"
